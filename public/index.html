@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Smart URL Shortener</title>
+
+<style>
+
+    body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Segoe UI',sans-serif;
+    background: linear-gradient(135deg,#5f9cff,#7c4dff);
+    margin:0;
+    }
+    
+    .container{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    text-align:center;
+    width:420px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.25);
+    }
+    
+    h1{
+    margin-bottom:25px;
+    color:#333;
+    }
+    
+    input{
+    width:100%;
+    padding:14px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    outline:none;
+    margin-bottom:20px;
+    font-size:16px;
+    }
+    
+    button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background:#5f9cff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    }
+    
+    button:hover{
+    background:#4a86e8;
+    }
+    
+    #result{
+    margin-top:20px;
+    word-break:break-all;
+    color:#333;
+    }
+    
+    .copy-btn{
+    margin-top:10px;
+    background:#00c853;
+    }
+    
+    .copy-btn:hover{
+    background:#00e676;
+    }
+    
+    .loader{
+    margin-top:15px;
+    display:none;
+    color:#333;
+    }
+    
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔗 URL Shortener</h1>
+
+<input type="text" id="longUrl" placeholder="Paste your long URL here">
+
+<button onclick="shortenUrl()">Generate Short URL</button>
+
+<div class="loader" id="loader">Generating...</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let currentShortUrl="";
+
+function isValidURL(string){
+try{
+new URL(string);
+return true;
+}catch(_){
+return false;
+}
+}
+
+async function shortenUrl(){
+
+const longUrl=document.getElementById("longUrl").value;
+
+if(!isValidURL(longUrl)){
+alert("Please enter a valid URL");
+return;
+}
+
+document.getElementById("loader").style.display="block";
+
+const response=await fetch("/shorten",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+originalUrl:longUrl
+})
+});
+
+const data=await response.json();
+
+document.getElementById("loader").style.display="none";
+
+currentShortUrl=data.shortUrl;
+
+document.getElementById("result").innerHTML=
+`
+<p><strong>Short URL:</strong></p>
+<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+
+<br>
+
+<button class="copy-btn" onclick="copyUrl()">Copy URL</button>
+`;
+
+}
+
+function copyUrl(){
+
+navigator.clipboard.writeText(currentShortUrl);
+
+alert("Short URL copied!");
+
+}
+
+</script>
+
+</body>
+</html>
