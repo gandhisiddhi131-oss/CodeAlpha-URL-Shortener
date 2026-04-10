@@ -27,5 +27,9 @@ POST /shorten
 {
  "originalUrl":"https://google.com"
 }
+## 📸 Project Preview
+
+![Screenshot1](img1u.png)
+![Screenshot2](img2u.png)
 ## Author
 Siddhi Gandhi
